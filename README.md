@@ -110,7 +110,8 @@ TarifDefteri/
 ├── appsettings.Development.json
 ├── Program.cs                # Uygulama başlangıç noktası
 ├── TarifDefteri.csproj       # Proje dosyası
-├── README.md                 # Proje dokümantasyonu
+├── README.md                 
+├── internetprogramlamarapor.docx #rapor
 └── .gitignore
 
 ```
