@@ -1,0 +1,130 @@
+@{
+    ViewData["Title"] = "Admin Panel";
+}
+
+<div class="container-fluid">
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h2 class="fw-bold mb-1">👨‍💼 Admin Panel</h2>
+                    <p class="text-muted">Hoş geldiniz, @ViewBag.Username!</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- İstatistik Kartları -->
+    <div class="row g-4 mb-4">
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                <div class="card-body text-white">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="mb-1 opacity-75">Toplam Kullanıcı</h6>
+                            <h2 class="mb-0 fw-bold">@ViewBag.TotalUsers</h2>
+                        </div>
+                        <i class="bi bi-people fs-1 opacity-50"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
+                <div class="card-body text-white">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="mb-1 opacity-75">Toplam Tarif</h6>
+                            <h2 class="mb-0 fw-bold">@ViewBag.TotalRecipes</h2>
+                        </div>
+                        <i class="bi bi-journal-text fs-1 opacity-50"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
+                <div class="card-body text-white">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="mb-1 opacity-75">Toplam Kategori</h6>
+                            <h2 class="mb-0 fw-bold">@ViewBag.TotalCategories</h2>
+                        </div>
+                        <i class="bi bi-tags fs-1 opacity-50"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm" style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);">
+                <div class="card-body text-white">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="mb-1 opacity-75">Bekleyen Onay</h6>
+                            <h2 class="mb-0 fw-bold">@ViewBag.PendingApprovals</h2>
+                        </div>
+                        <i class="bi bi-clock-history fs-1 opacity-50"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Hızlı Erişim Menüsü -->
+    <div class="row g-4">
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm h-100 hover-card">
+                <div class="card-body text-center p-5">
+                    <i class="bi bi-tags-fill text-primary mb-3" style="font-size: 3rem;"></i>
+                    <h4 class="fw-bold mb-3">Kategori Yönetimi</h4>
+                    <p class="text-muted mb-4">Kategorileri ekleyin, düzenleyin ve silin</p>
+                    <a asp-action="Categories" class="btn btn-primary btn-lg w-100">
+                        <i class="bi bi-arrow-right-circle"></i> Kategoriler
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm h-100 hover-card">
+                <div class="card-body text-center p-5">
+                    <i class="bi bi-people-fill text-success mb-3" style="font-size: 3rem;"></i>
+                    <h4 class="fw-bold mb-3">Kullanıcı Yönetimi</h4>
+                    <p class="text-muted mb-4">Kullanıcıları görüntüleyin ve yönetin</p>
+                    <a asp-action="Users" class="btn btn-success btn-lg w-100">
+                        <i class="bi bi-arrow-right-circle"></i> Kullanıcılar
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm h-100 hover-card">
+                <div class="card-body text-center p-5">
+                    <i class="bi bi-journal-text text-danger mb-3" style="font-size: 3rem;"></i>
+                    <h4 class="fw-bold mb-3">Tarif Yönetimi</h4>
+                    <p class="text-muted mb-4">Tüm tarifleri görüntüleyin ve yönetin</p>
+                    <a asp-action="Recipes" class="btn btn-danger btn-lg w-100">
+                        <i class="bi bi-arrow-right-circle"></i> Tarifler
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <style>
+        .hover-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .hover-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2) !important;
+        }
+    </style>
+}

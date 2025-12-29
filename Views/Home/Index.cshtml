@@ -1,0 +1,156 @@
+﻿@model List<TarifDefteri.Models.Recipe>
+@{
+    ViewData["Title"] = "Ana Sayfa";
+}
+
+<!-- Hero Section -->
+<div class="position-relative overflow-hidden p-5 text-center text-white" 
+     style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 20px; margin-bottom: 30px;">
+    <div class="col-md-8 mx-auto my-5">
+        <h1 class="display-4 fw-bold">🍳 TarifDefteri'ne Hoş Geldiniz!</h1>
+        <p class="lead">En lezzetli tarifleri keşfedin ve paylaşın</p>
+    </div>
+</div>
+
+<!-- Arama ve Filtre -->
+<div class="row mb-4">
+    <div class="col-md-12">
+        <div class="card shadow-sm border-0 rounded-3">
+            <div class="card-body">
+                <form method="get" asp-action="Index" class="row g-3">
+                    <div class="col-md-6">
+                        <div class="input-group">
+                            <span class="input-group-text bg-light"><i class="bi bi-search"></i></span>
+                            <input type="text" name="search" class="form-control" 
+                                   placeholder="Tarif ara..." value="@ViewBag.Search" />
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <select name="categoryId" class="form-select">
+                            <option value="">Tüm Kategoriler</option>
+                            @foreach (var category in ViewBag.Categories as List<TarifDefteri.Models.Category>)
+                            {
+                                <option value="@category.Id" 
+                                        selected="@(ViewBag.SelectedCategory == category.Id)">
+                                    @category.Name
+                                </option>
+                            }
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <button type="submit" class="btn btn-primary w-100">
+                            <i class="bi bi-funnel"></i> Filtrele
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Tarif Listesi -->
+<div class="row g-4">
+    @if (Model.Any())
+    {
+        @foreach (var recipe in Model)
+        {
+            var averageRating = recipe.Ratings.Any() ? recipe.Ratings.Average(r => r.Score) : 0;
+            
+            <div class="col-md-6 col-lg-4">
+                <div class="card h-100 shadow-sm border-0 rounded-3 overflow-hidden hover-card">
+                    <!-- Resim -->
+                    <div class="position-relative" style="height: 200px; overflow: hidden;">
+                        @if (!string.IsNullOrEmpty(recipe.ImageUrl))
+                        {
+                            <img src="@recipe.ImageUrl" class="card-img-top h-100 w-100" 
+                                 style="object-fit: cover;" alt="@recipe.Title" />
+                        }
+                        else
+                        {
+                            <div class="bg-gradient h-100 d-flex align-items-center justify-content-center" 
+                                 style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
+                                <i class="bi bi-image text-white" style="font-size: 3rem;"></i>
+                            </div>
+                        }
+                        
+                        <!-- Kategori Badge -->
+                        <span class="position-absolute top-0 start-0 m-2 badge bg-dark bg-opacity-75">
+                            @recipe.Category.Name
+                        </span>
+                    </div>
+
+                    <div class="card-body">
+                        <h5 class="card-title fw-bold text-truncate">@recipe.Title</h5>
+                        <p class="card-text text-muted small" style="height: 40px; overflow: hidden;">
+                            @recipe.Description
+                        </p>
+
+                        <!-- İstatistikler -->
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <small class="text-muted">
+                                <i class="bi bi-clock"></i> @recipe.PreparationTime dk
+                            </small>
+                            <small class="text-muted">
+                                <i class="bi bi-eye"></i> @recipe.ViewCount görüntülenme
+                            </small>
+                        </div>
+
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                @for (int i = 1; i <= 5; i++)
+                                {
+                                    @if (i <= averageRating)
+                                    {
+                                        <i class="bi bi-star-fill text-warning"></i>
+                                    }
+                                    else
+                                    {
+                                        <i class="bi bi-star text-muted"></i>
+                                    }
+                                }
+                                <small class="text-muted ms-1">(@recipe.Ratings.Count)</small>
+                            </div>
+                            <small class="text-muted">
+                                <i class="bi bi-person"></i> @recipe.User.Username
+                            </small>
+                        </div>
+                    </div>
+
+                    <div class="card-footer bg-transparent border-0 p-3 pt-0">
+                        <a asp-action="Details" asp-route-id="@recipe.Id" 
+                           class="btn btn-primary w-100 rounded-3">
+                            <i class="bi bi-eye"></i> Tarifi Gör
+                        </a>
+                    </div>
+                </div>
+            </div>
+        }
+    }
+    else
+    {
+        <div class="col-12">
+            <div class="alert alert-info text-center" role="alert">
+                <i class="bi bi-info-circle fs-1 d-block mb-3"></i>
+                <h4>Henüz tarif yok!</h4>
+                <p class="mb-0">İlk tarifi ekleyen siz olun!</p>
+            </div>
+        </div>
+    }
+</div>
+
+@section Styles {
+    <style>
+        .hover-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .hover-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2) !important;
+        }
+        
+        .bg-gradient {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+    </style>
+}

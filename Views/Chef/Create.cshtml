@@ -1,0 +1,139 @@
+@model TarifDefteri.Models.Recipe
+@{
+    ViewData["Title"] = "Yeni Tarif Ekle";
+}
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <!-- Başlık -->
+            <div class="mb-4">
+                <h2 class="fw-bold mb-1">➕ Yeni Tarif Ekle</h2>
+                <p class="text-muted">Lezzetli tarifini topluluğumuzla paylaş!</p>
+            </div>
+
+            <!-- Form Kartı -->
+            <div class="card border-0 shadow-sm">
+                <div class="card-body p-4">
+                    <form method="post" asp-action="Create">
+                        <div class="row g-4">
+                            <!-- Sol Kolon -->
+                            <div class="col-md-6">
+                                <div class="mb-4">
+                                    <label asp-for="Title" class="form-label fw-semibold">
+                                        <i class="bi bi-card-heading"></i> Tarif Adı
+                                    </label>
+                                    <input asp-for="Title" class="form-control form-control-lg" 
+                                           placeholder="Örn: Sütlaç, Mercimek Çorbası..." required />
+                                    <span asp-validation-for="Title" class="text-danger"></span>
+                                </div>
+
+                                <div class="mb-4">
+                                    <label asp-for="CategoryId" class="form-label fw-semibold">
+                                        <i class="bi bi-tag"></i> Kategori
+                                    </label>
+                                    <select asp-for="CategoryId" class="form-select form-select-lg" required>
+                                        <option value="">Kategori Seçin</option>
+                                        @foreach (var category in ViewBag.Categories as List<TarifDefteri.Models.Category>)
+                                        {
+                                            <option value="@category.Id">@category.Name</option>
+                                        }
+                                    </select>
+                                    <span asp-validation-for="CategoryId" class="text-danger"></span>
+                                </div>
+
+                                <div class="mb-4">
+                                    <label asp-for="PreparationTime" class="form-label fw-semibold">
+                                        <i class="bi bi-clock"></i> Hazırlama Süresi (Dakika)
+                                    </label>
+                                    <input asp-for="PreparationTime" type="number" class="form-control form-control-lg" 
+                                           placeholder="Örn: 30" min="1" required />
+                                    <span asp-validation-for="PreparationTime" class="text-danger"></span>
+                                </div>
+
+                                <div class="mb-4">
+                                    <label asp-for="ImageUrl" class="form-label fw-semibold">
+                                        <i class="bi bi-image"></i> Görsel URL (Opsiyonel)
+                                    </label>
+                                    <input asp-for="ImageUrl" type="url" class="form-control" 
+                                           placeholder="https://example.com/image.jpg" />
+                                    <small class="form-text text-muted">
+                                        Tarif görseli için bir URL girin (Unsplash, Imgur vb.)
+                                    </small>
+                                    <span asp-validation-for="ImageUrl" class="text-danger"></span>
+                                </div>
+                            </div>
+
+                            <!-- Sağ Kolon -->
+                            <div class="col-md-6">
+                                <div class="mb-4">
+                                    <label asp-for="Description" class="form-label fw-semibold">
+                                        <i class="bi bi-file-text"></i> Açıklama
+                                    </label>
+                                    <textarea asp-for="Description" class="form-control" rows="5" 
+                                              placeholder="Tarif hakkında kısa bir açıklama yazın..." required></textarea>
+                                    <span asp-validation-for="Description" class="text-danger"></span>
+                                </div>
+
+                                <div class="mb-4">
+                                    <label asp-for="Ingredients" class="form-label fw-semibold">
+                                        <i class="bi bi-basket"></i> Malzemeler
+                                    </label>
+                                    <textarea asp-for="Ingredients" class="form-control" rows="6" 
+                                              placeholder="Her satıra bir malzeme yazın veya virgülle ayırın
+Örn:
+2 yumurta
+1 su bardağı un
+1 çay kaşığı tuz" required></textarea>
+                                    <span asp-validation-for="Ingredients" class="text-danger"></span>
+                                </div>
+                            </div>
+
+                            <!-- Tam Genişlik -->
+                            <div class="col-12">
+                                <div class="mb-4">
+                                    <label asp-for="Instructions" class="form-label fw-semibold">
+                                        <i class="bi bi-list-ol"></i> Yapılışı (Adım Adım)
+                                    </label>
+                                    <textarea asp-for="Instructions" class="form-control" rows="8" 
+                                              placeholder="Tarifin yapılışını adım adım yazın...
+Örn:
+1. İlk olarak yumurtaları çırpın
+2. Una karıştırın
+3. Tuz ekleyin ve karıştırmaya devam edin" required></textarea>
+                                    <span asp-validation-for="Instructions" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Butonlar -->
+                        <div class="d-flex gap-2 mt-4">
+                            <button type="submit" class="btn btn-primary btn-lg px-4">
+                                <i class="bi bi-check-circle"></i> Tarifi Yayınla
+                            </button>
+                            <a asp-action="Index" class="btn btn-outline-secondary btn-lg px-4">
+                                <i class="bi bi-x-circle"></i> İptal
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Yardım Kutusu -->
+            <div class="alert alert-info mt-4" role="alert">
+                <i class="bi bi-lightbulb me-2"></i>
+                <strong>İpuçları:</strong>
+                <ul class="mb-0 mt-2">
+                    <li>Net ve anlaşılır bir başlık kullanın</li>
+                    <li>Malzemeleri ölçü birimleriyle birlikte yazın</li>
+                    <li>Yapılışı adım adım ve detaylı anlatın</li>
+                    <li>Görsel kullanmak tarifinizi daha çekici yapar</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

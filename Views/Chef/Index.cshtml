@@ -1,0 +1,233 @@
+@model List<TarifDefteri.Models.Recipe>
+@{
+    ViewData["Title"] = "Tariflerim";
+}
+
+<div class="container-fluid">
+    <!-- Başlık ve Ekle Butonu -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h2 class="fw-bold mb-1">👨‍🍳 Tariflerim</h2>
+                    <p class="text-muted">Hoş geldiniz, @ViewBag.Username!</p>
+                </div>
+                <a asp-action="Create" class="btn btn-primary btn-lg">
+                    <i class="bi bi-plus-circle"></i> Yeni Tarif Ekle
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- İstatistik Kartları -->
+    <div class="row g-4 mb-4">
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                <div class="card-body text-white">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="mb-1 opacity-75">Toplam Tarif</h6>
+                            <h2 class="mb-0 fw-bold">@ViewBag.TotalRecipes</h2>
+                        </div>
+                        <i class="bi bi-journal-text fs-1 opacity-50"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
+                <div class="card-body text-white">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="mb-1 opacity-75">Toplam Görüntülenme</h6>
+                            <h2 class="mb-0 fw-bold">@ViewBag.TotalViews</h2>
+                        </div>
+                        <i class="bi bi-eye fs-1 opacity-50"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
+                <div class="card-body text-white">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="mb-1 opacity-75">Toplam Yorum</h6>
+                            <h2 class="mb-0 fw-bold">@ViewBag.TotalComments</h2>
+                        </div>
+                        <i class="bi bi-chat-dots fs-1 opacity-50"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm" style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);">
+                <div class="card-body text-white">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="mb-1 opacity-75">Ortalama Puan</h6>
+                            <h2 class="mb-0 fw-bold">@ViewBag.AverageRating.ToString("0.0")</h2>
+                        </div>
+                        <i class="bi bi-star-fill fs-1 opacity-50"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bildirimler -->
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="bi bi-check-circle-fill me-2"></i>
+            @TempData["Success"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <!-- Tarif Listesi -->
+    @if (Model.Any())
+    {
+        <div class="row g-4">
+            @foreach (var recipe in Model)
+            {
+                var avgRating = recipe.Ratings.Any() ? recipe.Ratings.Average(r => r.Score) : 0;
+                
+                <div class="col-md-6 col-lg-4">
+                    <div class="card h-100 shadow-sm border-0 rounded-3 overflow-hidden hover-card">
+                        <!-- Resim -->
+                        <div class="position-relative" style="height: 200px; overflow: hidden;">
+                            @if (!string.IsNullOrEmpty(recipe.ImageUrl))
+                            {
+                                <img src="@recipe.ImageUrl" class="card-img-top h-100 w-100" 
+                                     style="object-fit: cover;" alt="@recipe.Title" />
+                            }
+                            else
+                            {
+                                <div class="bg-gradient h-100 d-flex align-items-center justify-content-center" 
+                                     style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
+                                    <i class="bi bi-image text-white" style="font-size: 3rem;"></i>
+                                </div>
+                            }
+                            
+                            <span class="position-absolute top-0 start-0 m-2 badge bg-dark bg-opacity-75">
+                                @recipe.Category.Name
+                            </span>
+                        </div>
+
+                        <div class="card-body">
+                            <h5 class="card-title fw-bold mb-2">@recipe.Title</h5>
+                            <p class="card-text text-muted small mb-3" style="height: 40px; overflow: hidden;">
+                                @recipe.Description
+                            </p>
+
+                            <!-- İstatistikler -->
+                            <div class="row g-2 mb-3">
+                                <div class="col-6">
+                                    <small class="text-muted">
+                                        <i class="bi bi-eye"></i> @recipe.ViewCount görüntülenme
+                                    </small>
+                                </div>
+                                <div class="col-6">
+                                    <small class="text-muted">
+                                        <i class="bi bi-chat-dots"></i> @recipe.Comments.Count yorum
+                                    </small>
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                @for (int i = 1; i <= 5; i++)
+                                {
+                                    @if (i <= avgRating)
+                                    {
+                                        <i class="bi bi-star-fill text-warning"></i>
+                                    }
+                                    else
+                                    {
+                                        <i class="bi bi-star text-muted"></i>
+                                    }
+                                }
+                                <small class="text-muted ms-1">(@recipe.Ratings.Count)</small>
+                            </div>
+                        </div>
+
+                        <div class="card-footer bg-transparent border-0 p-3 pt-0">
+                            <div class="btn-group w-100" role="group">
+                                <a asp-action="Details" asp-route-id="@recipe.Id" 
+                                   class="btn btn-outline-primary btn-sm">
+                                    <i class="bi bi-eye"></i> Görüntüle
+                                </a>
+                                <a asp-action="Edit" asp-route-id="@recipe.Id" 
+                                   class="btn btn-outline-success btn-sm">
+                                    <i class="bi bi-pencil"></i> Düzenle
+                                </a>
+                                <button type="button" class="btn btn-outline-danger btn-sm" 
+                                        data-bs-toggle="modal" data-bs-target="#deleteModal@(recipe.Id)">
+                                    <i class="bi bi-trash"></i> Sil
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Silme Onay Modal -->
+                <div class="modal fade" id="deleteModal@(recipe.Id)" tabindex="-1">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">Tarifi Sil</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                            </div>
+                            <div class="modal-body">
+                                <p><strong>@recipe.Title</strong> tarifini silmek istediğinize emin misiniz?</p>
+                                <p class="text-danger mb-0">
+                                    <i class="bi bi-exclamation-triangle"></i>
+                                    Bu işlem geri alınamaz!
+                                </p>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                    İptal
+                                </button>
+                                <form method="post" asp-action="Delete" asp-route-id="@recipe.Id" class="d-inline">
+                                    <button type="submit" class="btn btn-danger">
+                                        <i class="bi bi-trash"></i> Evet, Sil
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <div class="card border-0 shadow-sm">
+            <div class="card-body text-center py-5">
+                <i class="bi bi-journal-text fs-1 text-muted mb-3 d-block"></i>
+                <h4 class="mb-3">Henüz tarif eklemediniz</h4>
+                <p class="text-muted mb-4">İlk tarifini ekleyerek başla!</p>
+                <a asp-action="Create" class="btn btn-primary btn-lg">
+                    <i class="bi bi-plus-circle"></i> Tarif Ekle
+                </a>
+            </div>
+        </div>
+    }
+</div>
+
+@section Styles {
+    <style>
+        .hover-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .hover-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2) !important;
+        }
+    </style>
+}

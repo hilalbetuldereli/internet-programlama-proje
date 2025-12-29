@@ -1,0 +1,211 @@
+@model TarifDefteri.Models.Recipe
+@{
+    ViewData["Title"] = Model.Title;
+    var averageRating = ViewBag.AverageRating as double? ?? 0;
+    var userRating = ViewBag.UserRating as TarifDefteri.Models.Rating;
+    var isFavorite = ViewBag.IsFavorite as bool? ?? false;
+}
+
+<div class="row">
+    <!-- Sol Taraf - Tarif Detayı -->
+    <div class="col-lg-8">
+        <!-- Tarif Başlık -->
+        <div class="card shadow-sm border-0 rounded-3 mb-4">
+            <div class="card-body p-4">
+                <div class="d-flex justify-content-between align-items-start mb-3">
+                    <div>
+                        <h1 class="fw-bold mb-2">@Model.Title</h1>
+                        <p class="text-muted mb-0">
+                            <i class="bi bi-person-circle"></i> @Model.User.Username
+                            <span class="mx-2">•</span>
+                            <i class="bi bi-calendar"></i> @Model.CreatedDate.ToString("dd MMMM yyyy")
+                        </p>
+                    </div>
+                    
+                    @if (ViewBag.UserId != null)
+                    {
+                        <form method="post" asp-action="ToggleFavorite" asp-route-recipeId="@Model.Id">
+                            <button type="submit" class="btn btn-outline-danger btn-lg">
+                                @if (isFavorite)
+                                {
+                                    <i class="bi bi-heart-fill"></i>
+                                }
+                                else
+                                {
+                                    <i class="bi bi-heart"></i>
+                                }
+                            </button>
+                        </form>
+                    }
+                </div>
+
+                <!-- Puan ve İstatistikler -->
+                <div class="d-flex gap-4 mb-3">
+                    <div>
+                        @for (int i = 1; i <= 5; i++)
+                        {
+                            @if (i <= averageRating)
+                            {
+                                <i class="bi bi-star-fill text-warning fs-5"></i>
+                            }
+                            else
+                            {
+                                <i class="bi bi-star text-muted fs-5"></i>
+                            }
+                        }
+                        <span class="ms-2 fw-bold">@averageRating.ToString("0.0")</span>
+                        <small class="text-muted">(@Model.Ratings.Count puan)</small>
+                    </div>
+                    <div class="vr"></div>
+                    <div>
+                        <i class="bi bi-eye"></i> @Model.ViewCount görüntülenme
+                    </div>
+                    <div class="vr"></div>
+                    <div>
+                        <i class="bi bi-clock"></i> @Model.PreparationTime dakika
+                    </div>
+                </div>
+
+                <span class="badge bg-primary">@Model.Category.Name</span>
+            </div>
+        </div>
+
+        <!-- Tarif Resmi -->
+        @if (!string.IsNullOrEmpty(Model.ImageUrl))
+        {
+            <div class="card shadow-sm border-0 rounded-3 mb-4 overflow-hidden">
+                <img src="@Model.ImageUrl" class="img-fluid" alt="@Model.Title" />
+            </div>
+        }
+
+        <!-- Açıklama -->
+        <div class="card shadow-sm border-0 rounded-3 mb-4">
+            <div class="card-body p-4">
+                <h4 class="fw-bold mb-3"><i class="bi bi-info-circle"></i> Açıklama</h4>
+                <p class="text-muted">@Model.Description</p>
+            </div>
+        </div>
+
+        <!-- Malzemeler -->
+        <div class="card shadow-sm border-0 rounded-3 mb-4">
+            <div class="card-body p-4">
+                <h4 class="fw-bold mb-3"><i class="bi bi-basket"></i> Malzemeler</h4>
+                <ul class="list-unstyled">
+                    @foreach (var ingredient in Model.Ingredients.Split(','))
+                    {
+                        <li class="mb-2">
+                            <i class="bi bi-check-circle-fill text-success me-2"></i>
+                            @ingredient.Trim()
+                        </li>
+                    }
+                </ul>
+            </div>
+        </div>
+
+        <!-- Yapılışı -->
+        <div class="card shadow-sm border-0 rounded-3 mb-4">
+            <div class="card-body p-4">
+                <h4 class="fw-bold mb-3"><i class="bi bi-list-ol"></i> Yapılışı</h4>
+                <div class="text-muted" style="white-space: pre-line;">@Model.Instructions</div>
+            </div>
+        </div>
+
+        <!-- Yorumlar -->
+        <div class="card shadow-sm border-0 rounded-3 mb-4">
+            <div class="card-body p-4">
+                <h4 class="fw-bold mb-4">
+                    <i class="bi bi-chat-dots"></i> Yorumlar (@Model.Comments.Count)
+                </h4>
+
+                @if (ViewBag.UserId != null)
+                {
+                    <!-- Yorum Yap Formu -->
+                    <form method="post" asp-action="AddComment" asp-route-recipeId="@Model.Id" class="mb-4">
+                        <div class="input-group">
+                            <input type="text" name="text" class="form-control" 
+                                   placeholder="Yorumunuzu yazın..." required />
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-send"></i> Gönder
+                            </button>
+                        </div>
+                    </form>
+                }
+                else
+                {
+                    <div class="alert alert-info">
+                        <i class="bi bi-info-circle"></i>
+                        Yorum yapmak için <a asp-controller="Account" asp-action="Login">giriş yapın</a>
+                    </div>
+                }
+
+                <!-- Yorumlar Listesi -->
+                @foreach (var comment in Model.Comments.OrderByDescending(c => c.CreatedDate))
+                {
+                    <div class="border-bottom pb-3 mb-3">
+                        <div class="d-flex justify-content-between mb-2">
+                            <strong><i class="bi bi-person-circle"></i> @comment.User.Username</strong>
+                            <small class="text-muted">@comment.CreatedDate.ToString("dd MMM yyyy HH:mm")</small>
+                        </div>
+                        <p class="mb-0 text-muted">@comment.Text</p>
+                    </div>
+                }
+
+                @if (!Model.Comments.Any())
+                {
+                    <p class="text-center text-muted">Henüz yorum yapılmamış.</p>
+                }
+            </div>
+        </div>
+    </div>
+
+    <!-- Sağ Taraf - Puan Ver -->
+    <div class="col-lg-4">
+        @if (ViewBag.UserId != null)
+        {
+            <div class="card shadow-sm border-0 rounded-3 mb-4 sticky-top" style="top: 20px;">
+                <div class="card-body p-4">
+                    <h5 class="fw-bold mb-3"><i class="bi bi-star"></i> Bu Tarifi Puanla</h5>
+                    
+                    @if (userRating != null)
+                    {
+                        <div class="alert alert-success mb-3">
+                            <i class="bi bi-check-circle"></i> Puanınız: @userRating.Score ⭐
+                        </div>
+                    }
+
+                    <form method="post" asp-action="AddRating" asp-route-recipeId="@Model.Id">
+                        <div class="text-center mb-3">
+                            <div class="btn-group" role="group">
+                                @for (int i = 1; i <= 5; i++)
+                                {
+                                    var isSelected = userRating?.Score == i;
+                                    <input type="radio" class="btn-check" name="score" 
+                                           value="@i" id="star@(i)" 
+                                           checked="@isSelected" required />
+                                    <label class="btn btn-outline-warning" for="star@(i)">
+                                        @i ⭐
+                                    </label>
+                                }
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">
+                            <i class="bi bi-star-fill"></i> Puan Ver
+                        </button>
+                    </form>
+                </div>
+            </div>
+        }
+        else
+        {
+            <div class="card shadow-sm border-0 rounded-3 mb-4">
+                <div class="card-body p-4 text-center">
+                    <i class="bi bi-star fs-1 text-warning mb-3 d-block"></i>
+                    <h5 class="fw-bold mb-3">Puan vermek için</h5>
+                    <a asp-controller="Account" asp-action="Login" class="btn btn-primary w-100">
+                        Giriş Yapın
+                    </a>
+                </div>
+            </div>
+        }
+    </div>
+</div>

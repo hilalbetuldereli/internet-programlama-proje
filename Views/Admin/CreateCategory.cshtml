@@ -1,0 +1,61 @@
+@model TarifDefteri.Models.Category
+@{
+    ViewData["Title"] = "Yeni Kategori Ekle";
+}
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <!-- Başlık -->
+            <div class="mb-4">
+                <h2 class="fw-bold mb-1">➕ Yeni Kategori Ekle</h2>
+                <p class="text-muted">Yeni bir tarif kategorisi oluşturun</p>
+            </div>
+
+            <!-- Form Kartı -->
+            <div class="card border-0 shadow-sm">
+                <div class="card-body p-4">
+                    <form method="post" asp-action="CreateCategory">
+                        <div class="mb-4">
+                            <label asp-for="Name" class="form-label fw-semibold">
+                                <i class="bi bi-tag"></i> Kategori Adı
+                            </label>
+                            <input asp-for="Name" class="form-control form-control-lg" 
+                                   placeholder="Örn: Çorba, Ana Yemek, Tatlı..." required />
+                            <span asp-validation-for="Name" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-4">
+                            <label asp-for="Description" class="form-label fw-semibold">
+                                <i class="bi bi-file-text"></i> Açıklama
+                            </label>
+                            <textarea asp-for="Description" class="form-control" rows="4" 
+                                      placeholder="Kategori hakkında kısa bir açıklama yazın..." required></textarea>
+                            <span asp-validation-for="Description" class="text-danger"></span>
+                        </div>
+
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="bi bi-check-circle"></i> Kategori Ekle
+                            </button>
+                            <a asp-action="Categories" class="btn btn-outline-secondary btn-lg">
+                                <i class="bi bi-x-circle"></i> İptal
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Bilgi Kutusu -->
+            <div class="alert alert-info mt-4" role="alert">
+                <i class="bi bi-info-circle me-2"></i>
+                <strong>İpucu:</strong> Anlamlı ve açıklayıcı kategori adları kullanın. 
+                Bu, kullanıcıların tarifleri daha kolay bulmasına yardımcı olur.
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
